@@ -26,6 +26,16 @@ public struct SheetKit {
         rootViewController?.topmostPresentingViewController?.dismiss(animated: flag, completion: completion)
     }
 
+    /// present seht
+    /// - Parameters:
+    ///   - controller: 从哪个UIViewController创建sheet。默认值即可
+    ///   - style: Sheet 的样式，目前支持 sheet fullScreenCover bottomSheet 以及 customBottomSheet（自定义）
+    ///   - animated: 是否开启动画
+    ///   - afterPresent: 展示后执行的block
+    ///   - onDisappear: viewDidDisappeare时执行的block
+    ///   - configration: 自定义bottomSheet的配置
+    ///   - detentIdentifier: 当modal状态发生变化时（高度变化）通知绑定值
+    ///   - content: 视图内容
     public func present<Content: View>(in controller: ControllerSource = .rootController,
                                        with style: SheetStyle = .sheet,
                                        animated: Bool = true,
@@ -107,6 +117,15 @@ public extension SheetKit {
     }
 
     struct BottomSheetConfiguration {
+        /// BottomSheet配置
+        /// - Parameters:
+        ///   - detents: 允许的高度，默认[.medium(), .large()]，第一个为sheet初次显示的位置
+        ///   - largestUndimmedDetentIdentifier: 交互遮罩尺寸。默认为nil(相当于.large)，如果设置为.medium，当显示半高时，Sheet下的视图可交互
+        ///   - prefersGrabberVisible: 是否显示模态视图上方的抓取提示
+        ///   - prefersScrollingExpandsWhenScrolledToEdge: 模态视图中的滚动是否会影响模态视图高度。如果想在半高时，顺利滚动，需设置为false
+        ///   - prefersEdgeAttachedInCompactHeight: 模态视图是否以紧凑高度尺寸附加到屏幕的底部边缘
+        ///   - widthFollowsPreferredContentSizeWhenEdgeAttached: 模态视图的宽度是否于视图控制器的首选内容大小相匹配
+        ///   - preferredCornerRadius: 模态视图圆角值
         public init(detents: [UISheetPresentationController.Detent],
                     largestUndimmedDetentIdentifier: UISheetPresentationController.Detent.Identifier?,
                     prefersGrabberVisible: Bool,
