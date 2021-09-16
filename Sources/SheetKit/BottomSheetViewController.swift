@@ -18,6 +18,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
     private let widthFollowsPreferredContentSizeWhenEdgeAttached: Bool
     private var detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>?
     private let preferredCornerRadius: CGFloat?
+    private let notificationName:Notification.Name
     private let contentView: UIHostingController<Content>
 
 
@@ -30,6 +31,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
         widthFollowsPreferredContentSizeWhenEdgeAttached: Bool = false,
         detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>? = nil,
         preferredCornerRadius: CGFloat?,
+        notificationName:Notification.Name = .bottomSheetDetentIdentifierDidChanged,
         content: Content
     ) {
         self.detents = detents
@@ -40,6 +42,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
         self.widthFollowsPreferredContentSizeWhenEdgeAttached = widthFollowsPreferredContentSizeWhenEdgeAttached
         self.detentIdentifier = detentIdentifier
         self.preferredCornerRadius = preferredCornerRadius
+        self.notificationName = notificationName
         contentView = UIHostingController(rootView: content)
 
         super.init(nibName: nil, bundle: nil)
@@ -84,5 +87,10 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
     func sheetPresentationControllerDidChangeSelectedDetentIdentifier(_ sheetPresentationController: UISheetPresentationController) {
         guard let selectedDetentIdentifier = sheetPresentationController.selectedDetentIdentifier else { return }
         detentIdentifier?.wrappedValue = selectedDetentIdentifier
+        NotificationCenter.default.post(name: .bottomSheetDetentIdentifierDidChanged, object: selectedDetentIdentifier)
     }
+}
+
+public extension Notification.Name{
+    static let bottomSheetDetentIdentifierDidChanged = Notification.Name("bottomSheetDetentIdentifierDidChanged")
 }
