@@ -52,6 +52,7 @@ public struct SheetKit {
                                                                   prefersEdgeAttachedInCompactHeight: configuration.prefersEdgeAttachedInCompactHeight,
                                                                   widthFollowsPreferredContentSizeWhenEdgeAttached: configuration.widthFollowsPreferredContentSizeWhenEdgeAttached,
                                                                   detentIdentifier: detentIdentifier,
+                                                                  preferredCornerRadius: configuration.preferredCornerRadius,
                                                                   content: content())
             case .customBottomSheet:
                 guard let configuration = configuration else {fatalError("configuration can't be nil in customBottomSheet style.")}
@@ -62,6 +63,7 @@ public struct SheetKit {
                                                                   prefersEdgeAttachedInCompactHeight: configuration.prefersEdgeAttachedInCompactHeight,
                                                                   widthFollowsPreferredContentSizeWhenEdgeAttached: configuration.widthFollowsPreferredContentSizeWhenEdgeAttached,
                                                                   detentIdentifier: detentIdentifier,
+                                                                  preferredCornerRadius: configuration.preferredCornerRadius,
                                                                   content: content())
 
         }
@@ -103,7 +105,7 @@ public extension SheetKit {
     }
 
     struct BottomSheetConfiguration {
-        init(detents: [UISheetPresentationController.Detent],
+        public init(detents: [UISheetPresentationController.Detent],
              largestUndimmedDetentIdentifier: UISheetPresentationController.Detent.Identifier?,
              prefersGrabberVisible: Bool,
              prefersScrollingExpandsWhenScrolledToEdge: Bool,

@@ -17,7 +17,9 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
     private let prefersEdgeAttachedInCompactHeight: Bool
     private let widthFollowsPreferredContentSizeWhenEdgeAttached: Bool
     private var detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>?
+    private let preferredCornerRadius: CGFloat?
     private let contentView: UIHostingController<Content>
+
 
     public init(
         detents: [UISheetPresentationController.Detent] = [.medium(), .large()],
@@ -27,6 +29,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
         prefersEdgeAttachedInCompactHeight: Bool = false,
         widthFollowsPreferredContentSizeWhenEdgeAttached: Bool = false,
         detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>? = nil,
+        preferredCornerRadius: CGFloat?,
         content: Content
     ) {
         self.detents = detents
@@ -36,6 +39,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
         self.prefersEdgeAttachedInCompactHeight = prefersEdgeAttachedInCompactHeight
         self.widthFollowsPreferredContentSizeWhenEdgeAttached = widthFollowsPreferredContentSizeWhenEdgeAttached
         self.detentIdentifier = detentIdentifier
+        self.preferredCornerRadius = preferredCornerRadius
         contentView = UIHostingController(rootView: content)
 
         super.init(nibName: nil, bundle: nil)
@@ -68,7 +72,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
             presentationController.prefersScrollingExpandsWhenScrolledToEdge = prefersScrollingExpandsWhenScrolledToEdge
             presentationController.prefersEdgeAttachedInCompactHeight = prefersEdgeAttachedInCompactHeight
             presentationController.widthFollowsPreferredContentSizeWhenEdgeAttached = widthFollowsPreferredContentSizeWhenEdgeAttached
-
+            presentationController.preferredCornerRadius = preferredCornerRadius
             presentationController.delegate = self
         }
     }
