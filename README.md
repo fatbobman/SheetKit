@@ -1,3 +1,3 @@
 # SheetKit
 
-A description of this package.
+SheetKit is an extension library for SwiftUI sheets.
