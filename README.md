@@ -19,6 +19,12 @@ The main reasons for developing SheetKit.
 * The new UISheetPresentationController
   In WWDC 2021, Apple brought the long-awaited half-height modal view to everyone. The SheetKit makes up for it for now, but perhaps in a bit of a hurry, as there is no SwiftUI version of this popular interaction, only UIKit support. Both sheets, fullScreenCover and bottomSheet (half-height modal view) are fully supported and managed in one place.
 
+## System requirements##
+
+iOS 15
+Swift 5.5
+XCode 13.0 +
+
 
 ## How to use ##
 
