@@ -28,51 +28,53 @@ public struct SheetKit {
 
     public func present<Content: View>(in controller: ControllerSource = .rootController,
                                        with style: SheetStyle = .sheet,
-                                       animated:Bool = true,
-                                       completion: (() -> Void)? = nil,
+                                       animated: Bool = true,
+                                       afterPresent: (() -> Void)? = nil,
+                                       onDisappear:(() -> Void)? = nil,
                                        configuration: BottomSheetConfiguration? = nil,
                                        detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>? = nil,
-                                       content: () -> Content) {
+                                       content: () -> Content)
+    {
         let viewController = controller == .rootController ? rootViewController?.topmostPresentedViewController : rootViewController?.topmostViewController
 
-        let contentViewController:UIViewController
+        let contentViewController: UIViewController
 
         switch style {
-            case .sheet:
-                contentViewController = UIHostingController(rootView: content())
-            case .fullScreenCover:
-                contentViewController = UIHostingController(rootView: content())
-                contentViewController.modalPresentationStyle = .fullScreen
-            case .bottomSheet:
-                let configuration = BottomSheetConfiguration.default
-                contentViewController = BottomSheetViewController(detents: configuration.detents,
-                                                                  largestUndimmedDetentIdentifier: configuration.largestUndimmedDetentIdentifier,
-                                                                  prefersGrabberVisible: configuration.prefersGrabberVisible,
-                                                                  prefersScrollingExpandsWhenScrolledToEdge: configuration.prefersScrollingExpandsWhenScrolledToEdge,
-                                                                  prefersEdgeAttachedInCompactHeight: configuration.prefersEdgeAttachedInCompactHeight,
-                                                                  widthFollowsPreferredContentSizeWhenEdgeAttached: configuration.widthFollowsPreferredContentSizeWhenEdgeAttached,
-                                                                  detentIdentifier: detentIdentifier,
-                                                                  preferredCornerRadius: configuration.preferredCornerRadius,
-                                                                  content: content())
-            case .customBottomSheet:
-                guard let configuration = configuration else {fatalError("configuration can't be nil in customBottomSheet style.")}
-                contentViewController = BottomSheetViewController(detents: configuration.detents,
-                                                                  largestUndimmedDetentIdentifier: configuration.largestUndimmedDetentIdentifier,
-                                                                  prefersGrabberVisible: configuration.prefersGrabberVisible,
-                                                                  prefersScrollingExpandsWhenScrolledToEdge: configuration.prefersScrollingExpandsWhenScrolledToEdge,
-                                                                  prefersEdgeAttachedInCompactHeight: configuration.prefersEdgeAttachedInCompactHeight,
-                                                                  widthFollowsPreferredContentSizeWhenEdgeAttached: configuration.widthFollowsPreferredContentSizeWhenEdgeAttached,
-                                                                  detentIdentifier: detentIdentifier,
-                                                                  preferredCornerRadius: configuration.preferredCornerRadius,
-                                                                  content: content())
-
+        case .sheet:
+            contentViewController = MyUIHostingController(rootView: content(),onDisappear: onDisappear)
+        case .fullScreenCover:
+            contentViewController = MyUIHostingController(rootView: content(),onDisappear: onDisappear)
+            contentViewController.modalPresentationStyle = .fullScreen
+        case .bottomSheet:
+            let configuration = BottomSheetConfiguration.default
+            contentViewController = BottomSheetViewController(detents: configuration.detents,
+                                                              largestUndimmedDetentIdentifier: configuration.largestUndimmedDetentIdentifier,
+                                                              prefersGrabberVisible: configuration.prefersGrabberVisible,
+                                                              prefersScrollingExpandsWhenScrolledToEdge: configuration.prefersScrollingExpandsWhenScrolledToEdge,
+                                                              prefersEdgeAttachedInCompactHeight: configuration.prefersEdgeAttachedInCompactHeight,
+                                                              widthFollowsPreferredContentSizeWhenEdgeAttached: configuration.widthFollowsPreferredContentSizeWhenEdgeAttached,
+                                                              detentIdentifier: detentIdentifier,
+                                                              preferredCornerRadius: configuration.preferredCornerRadius,
+                                                              onDisappear: onDisappear,
+                                                              content: content())
+        case .customBottomSheet:
+            guard let configuration = configuration else { fatalError("configuration can't be nil in customBottomSheet style.") }
+            contentViewController = BottomSheetViewController(detents: configuration.detents,
+                                                              largestUndimmedDetentIdentifier: configuration.largestUndimmedDetentIdentifier,
+                                                              prefersGrabberVisible: configuration.prefersGrabberVisible,
+                                                              prefersScrollingExpandsWhenScrolledToEdge: configuration.prefersScrollingExpandsWhenScrolledToEdge,
+                                                              prefersEdgeAttachedInCompactHeight: configuration.prefersEdgeAttachedInCompactHeight,
+                                                              widthFollowsPreferredContentSizeWhenEdgeAttached: configuration.widthFollowsPreferredContentSizeWhenEdgeAttached,
+                                                              detentIdentifier: detentIdentifier,
+                                                              preferredCornerRadius: configuration.preferredCornerRadius,
+                                                              onDisappear: onDisappear,
+                                                              content: content())
         }
 
-        viewController?.present(contentViewController, animated: animated, completion: completion)
+        viewController?.present(contentViewController, animated: animated, completion: afterPresent)
     }
 
-    public init(){}
-
+    public init() {}
 }
 
 public extension SheetKit {
@@ -106,12 +108,12 @@ public extension SheetKit {
 
     struct BottomSheetConfiguration {
         public init(detents: [UISheetPresentationController.Detent],
-             largestUndimmedDetentIdentifier: UISheetPresentationController.Detent.Identifier?,
-             prefersGrabberVisible: Bool,
-             prefersScrollingExpandsWhenScrolledToEdge: Bool,
-             prefersEdgeAttachedInCompactHeight: Bool,
-             widthFollowsPreferredContentSizeWhenEdgeAttached: Bool,
-             preferredCornerRadius: CGFloat?)
+                    largestUndimmedDetentIdentifier: UISheetPresentationController.Detent.Identifier?,
+                    prefersGrabberVisible: Bool,
+                    prefersScrollingExpandsWhenScrolledToEdge: Bool,
+                    prefersEdgeAttachedInCompactHeight: Bool,
+                    widthFollowsPreferredContentSizeWhenEdgeAttached: Bool,
+                    preferredCornerRadius: CGFloat?)
         {
             self.detents = detents
             self.largestUndimmedDetentIdentifier = largestUndimmedDetentIdentifier
@@ -142,13 +144,29 @@ public extension SheetKit {
 
 // MARK: - Environment
 
-public struct SheetKitKey:EnvironmentKey{
+public struct SheetKitKey: EnvironmentKey {
     public static var defaultValue = SheetKit()
 }
 
-public extension EnvironmentValues{
-    var sheetKit:SheetKit{
-        get{self[SheetKitKey.self]}
-    }
+public extension EnvironmentValues {
+    var sheetKit: SheetKit { self[SheetKitKey.self] }
 }
 
+// MARK: - UIHostingController
+
+final class MyUIHostingController<Content: View>: UIHostingController<Content> {
+    var onDisappear: (() -> Void)?
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        onDisappear?()
+    }
+
+    init(rootView: Content,onDisappear:(() -> Void)? = nil) {
+        self.onDisappear = onDisappear
+        super.init(rootView: rootView)
+    }
+
+    @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

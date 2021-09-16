@@ -18,9 +18,9 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
     private let widthFollowsPreferredContentSizeWhenEdgeAttached: Bool
     private var detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>?
     private let preferredCornerRadius: CGFloat?
-    private let notificationName:Notification.Name
+    private let notificationName: Notification.Name
+    private let onDisappear: (() -> Void)?
     private let contentView: UIHostingController<Content>
-
 
     public init(
         detents: [UISheetPresentationController.Detent] = [.medium(), .large()],
@@ -31,7 +31,8 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
         widthFollowsPreferredContentSizeWhenEdgeAttached: Bool = false,
         detentIdentifier: Binding<UISheetPresentationController.Detent.Identifier>? = nil,
         preferredCornerRadius: CGFloat?,
-        notificationName:Notification.Name = .bottomSheetDetentIdentifierDidChanged,
+        notificationName: Notification.Name = .bottomSheetDetentIdentifierDidChanged,
+        onDisappear: (() -> Void)? = nil,
         content: Content
     ) {
         self.detents = detents
@@ -43,6 +44,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
         self.detentIdentifier = detentIdentifier
         self.preferredCornerRadius = preferredCornerRadius
         self.notificationName = notificationName
+        self.onDisappear = onDisappear
         contentView = UIHostingController(rootView: content)
 
         super.init(nibName: nil, bundle: nil)
@@ -82,6 +84,7 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
 
     override public func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        onDisappear?()
     }
 
     func sheetPresentationControllerDidChangeSelectedDetentIdentifier(_ sheetPresentationController: UISheetPresentationController) {
@@ -91,6 +94,6 @@ final class BottomSheetViewController<Content: View>: UIViewController, UISheetP
     }
 }
 
-public extension Notification.Name{
+public extension Notification.Name {
     static let bottomSheetDetentIdentifierDidChanged = Notification.Name("bottomSheetDetentIdentifierDidChanged")
 }
